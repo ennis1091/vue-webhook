@@ -1,7 +1,7 @@
 let http = require("http");
 let crypto = require("crypto");
 let SECRET = "123456"; //github webhook自定义的密码
-let spawn = require("child_process");
+let { spawn } = require("child_process");
 function sign(body) {
   return (
     `sha1=` +
