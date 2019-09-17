@@ -1,6 +1,7 @@
 let http = require("http");
 let crypto = require("crypto");
 let SECRET = "123456"; //github webhook自定义的密码
+let spawn = require("child_process");
 function sign(body) {
   return (
     `sha1=` +
@@ -25,9 +26,22 @@ let server = http.createServer(function(req, res) {
       if (signature !== sign(body)) {
         return res.end("Not Allowed");
       }
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify({ ok: true }));
+      if (even == "push") {
+        //开始部署
+        let payload = JSON.parse(body);
+        let child = spawn("sh", [`./${payload.repository.name}.sh`]);
+        let buffer = [];
+        child.stdout.on("data", function(buffer) {
+          buffers.push(buffer);
+        });
+        child.stdout.on("end", function(buffer) {
+          let log = Buffer.concat(buffers);
+          console.log(log);
+        });
+      }
     });
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify({ ok: true }));
   } else {
     res.end("Not Found");
   }
