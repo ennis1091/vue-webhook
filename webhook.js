@@ -2,6 +2,7 @@ let http = require("http");
 let crypto = require("crypto");
 let SECRET = "123456"; //github webhook自定义的密码
 let { spawn } = require("child_process");
+let sendMail = require("./sendMail"); //发送邮件
 function sign(body) {
   return (
     `sha1=` +
@@ -37,8 +38,15 @@ let server = http.createServer(function(req, res) {
           buffers.push(buffer);
         });
         child.stdout.on("end", function(buffer) {
-          let log = Buffer.concat(buffers);
-          console.log(log);
+          let logs = Buffer.concat(buffers).toString();
+          sendMail(`
+                <h1>部署日期: ${new Date()}</h1>
+                <h2>部署人: ${payload.pusher.name}</h2>
+                <h2>部署邮箱: ${payload.pusher.email}</h2>
+                <h2>提交信息: ${payload.head_commit &&
+                  payload.head_commit["message"]}</h2>
+                <h2>布署日志: ${logs.replace("\r\n", "<br/>")}</h2>
+            `);
         });
       }
     });
