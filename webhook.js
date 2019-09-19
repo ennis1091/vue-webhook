@@ -53,10 +53,10 @@ let server = http.createServer(function(req, res) {
             });
           }
           // 返回的json, 配置在./src/resModel中
-          res.end(resultString("success", 0));
+          res.end("success");
         } else {
           // 其他的请求返回不允许
-          return res.end(resultString("Not Allowed", 1));
+          return res.end("Not Allowed");
         }
       } else {
         let signature = req.headers["x-hub-signature"];
