@@ -38,8 +38,8 @@ let server = http.createServer(function(req, res) {
             // payload.repository.path 是gitee/github传来的repo的路径
             // 通过path的值执行sh目录下对应的脚本
             // 比如项目名字叫web_hook path的值就是web_hook
-            // 执行的脚本就是./sh/web_hook.sh
-            let child = spawn("sh", [`./sh/${payload.repository.name}.sh`]);
+            // 执行的脚本就是./web_hook.sh
+            let child = spawn("sh", [`./${payload.repository.name}.sh`]);
             // 接收子进程传来的数据
             let buffers = [];
             child.stdout.on("data", buffer => {
